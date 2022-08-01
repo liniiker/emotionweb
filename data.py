@@ -11,7 +11,7 @@ while True:
         data = message.strip().decode()
         split_string = data.split(',')  #percorrendo a string
 
-        charge = float(split_string[0])  # convert first part of string into float
+        charge = int(split_string[0])  # convert first part of string into float
         speed = float(split_string[1])
         t1 = float(split_string[2])  # convert second part of string into float
         t2 = float(split_string[3])

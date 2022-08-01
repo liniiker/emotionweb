@@ -1,98 +1,383 @@
+import base64
 import dash
+from dash import html, dcc
 import dash_bootstrap_components as dbc
-from dash import html
-from dash import dcc
 import dash_daq as daq
 from datetime import datetime
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output
 import pandas as pd
+import plotly.graph_objs as go
 
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+#pip freeze > requirements.txt
+
+#maxicon_jpg = 'logos/maxicon.jpg'
+#maxicon_base64 = base64.b64encode(open(maxicon_jpg,'rb').read()).decode('ascii')
 
 header_list = ['Time', 'Estado de Carga', 'Velocidade', 'Temperatura1', 'Temperatura2', 'Temperatura3', 'Temperatura4', 'RPM1', 'RPM2', 'RPM3', 'RPM4', 'TEMPERATURA MOTOR']
 arq = pd.read_csv('data.csv', names=header_list)
 
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-card_style = {
-    'padding':'10px'
-}
 app.layout = html.Div([
-
-    dbc.Row([
-        dbc.Col([
-            dbc.CardImg(src=r"C:\\Users\\elima\\Desktop\\E-MOTION\\painelemotion\\img\\logo_branco.png",
-                        style={'height': '67px',
-                               'width': '135px',
-                               }
-                        )
-                ], width=4),
-
-        dbc.Col([
-            html.Div("FÓRMULA E.MOTION UFPB",
-                    style = {'color': 'white', 'fontSize': 30, 'textAlign': 'center'})
-                ], width=4),
-
-        dbc.Col([
-            dbc.CardImg(src ="logos/logoufpb.png",
-                        className = 'align-self-center',
-                        style = {'height':'64px',
-                                'width':'45px',
-                                })
-                ], width=4),
-        ], style = {'background-color':'#181a25', 'textAlign':'center'},
-    ), # mb-4 aparentemente serve como um padding bot
-
-    dbc.Row(html.Hr(),style = {'color':'white', 'background-color':'#000138'}),
     html.Div([
         dcc.Interval(id = 'update_value',
-                     interval = 500,
-                     n_intervals = 0)
+        interval = 900,
+        n_intervals= 0),
     ]),
 
     dbc.Row([
         dbc.Col([
+            html.Div([
+                dcc.Graph(id = 'chart',
+                          animate = True,
+                          style = {'height':'30vh'}
+                )
+            ])
+        ],width=8,),
+        dbc.Col([
             dbc.Card([
-                html.H2('Roda Dianteira Esquerda', style = {'color':'white', 'textAlign':'center'}),
                 dbc.CardBody(html.Div(id='card_1'))
-            ], color='#112c38', style={'height':'52vh'})
-        ], width= 4),
-        dbc.Col([
-            dbc.Card([
-                html.H2('VELOCIDADE', style = {'color':'white', 'textAlign':'center'}),
-                dbc.CardBody(html.Div(id='card_2'))
-            ], color='#112c38', style={'height':'52vh'})
-        ], width= 4), # colocando um style aqui, posso aumentar o tamanho da coluna, ou fazer isso na row, para n encostar na row de baixo
-        dbc.Col([
-            dbc.Card([
-                html.H2('Roda Dianteira Direita', style={'color': 'white', 'textAlign': 'center'}),
-                dbc.CardBody(html.Div(id='card_3'))
-            ], color='#112c38', style={'height':'52vh'})
-        ], width=4, style = {'padding-bottom':'10vh'}),
-    ], style = {'background-color':'#000138'}),
-
+            ], color='#112c38', style = {'height':'30vh'})
+        ],width=4),
+    ], style={'height':'30vh','width':'100vw'}),
+    html.Br(),
     dbc.Row([
         dbc.Col([
-            dbc.Card([
-                html.H2('Roda Traseira Esquerda', style = {'color':'white', 'textAlign':'center'}),
-                dbc.CardBody(html.Div(id='card_4'))
-            ], color='#112c38', style = card_style)
-        ], width= 4),
+            html.Div([
+                dcc.Graph(id = 'chart2',
+                          animate = True,
+                          style = {'height':'30vh'}
+                )
+            ])
+        ],width=8),
         dbc.Col([
             dbc.Card([
-                html.H2('Estado de Carga', style = {'color':'white', 'textAlign':'center'}),
-                dbc.CardBody(html.Div(id='card_5'))
-            ], color='#112c38', style = card_style)
-        ], width= 4),
+                dbc.CardBody(html.Div(id='card_2'))
+            ], color='#112c38', style = {'height':'30vh'})
+        ],width=4),
+    ], style={'height':'30vh','width':'100vw'}),
+    html.Br(),
+    dbc.Row([
+        dbc.Col([
+            html.Div([
+                dcc.Graph(id = 'chart3',
+                          animate = True,
+                          style = {'height':'30vh'}
+                )
+            ])
+        ],width=8),
         dbc.Col([
             dbc.Card([
-                html.H2('Roda Traseira Direita', style={'color': 'white', 'textAlign': 'center'}),
-                dbc.CardBody(html.Div(id='card_6'))
-            ], color='#112c38', style=card_style)
-        ], width=4),
-    ], style = {'background-color':'#000138'}),
-])
+                dbc.CardBody(html.Div(id='card_3'))
+            ], color='#112c38', style = {'height':'30vh'})
+        ],width=4),
+    ], style={'height':'30vh','width':'100vw'}),
+], style={'height':'100vh','width':'100vw','background-color':'#000138'})
+
+@app.callback(Output('chart', 'figure'),
+              [Input('update_value', 'n_intervals')])
+def update_graph(n_intervals):
+    if n_intervals == 0:
+        raise PreventUpdate
+    else:
+
+        header_list = ['Time', 'Estado de Carga', 'Velocidade', 'Temperatura1', 'Temperatura2', 'Temperatura3',
+                       'Temperatura4', 'RPM1', 'RPM2', 'RPM3', 'RPM4', 'TEMPERATURA MOTOR']
+        bitcoin_df = pd.read_csv('data.csv', names = header_list)
+        bitcoin_price = bitcoin_df['Temperatura1'].tail(100)
+        time_interval = bitcoin_df['Time'].tail(100)
+
+
+    return {
+        'data': [go.Scatter(
+            x = time_interval,
+            y = bitcoin_price,
+            #fill = 'tonexty',
+            #fillcolor = 'rgba(255, 0, 255, 0.1)',
+            mode = 'lines',
+            line = dict(width = 2, color = '#33FFFC'),
+            # marker = dict(size = 7, symbol = 'circle', color = '#D35400',
+            #               line = dict(color = '#D35400', width = 2)
+            #               ),
+
+            hoverinfo = 'text',
+            hovertext =
+            '<b>Time</b>: ' + time_interval.astype(str) + '<br>' +
+            '<b>Bitcoin Price</b>: ' + [f'${x:,.2f}' for x in bitcoin_price] + '<br>'
+
+
+        )],
+
+        'layout': go.Layout(
+            # paper_bgcolor = 'rgba(0,0,0,0)',
+            # plot_bgcolor = 'rgba(0,0,0,0)',
+            plot_bgcolor = 'rgba(50, 53, 70, 0)',
+            paper_bgcolor = 'rgba(50, 53, 70, 0)',
+            title = {
+                'text': 'velocidade',
+
+                'y': 0.97,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+            titlefont = {
+                'color': '#33FFFC',
+                'size': 17},
+
+            hovermode = 'closest',
+            margin = dict(t = 25, r = 10, l = 70),
+
+            xaxis = dict(range = [min(time_interval), max(time_interval)],
+                         title = '<b>Time</b>',
+                         color = '#33FFFC',
+                         #showspikes=True,
+                         showline = True,
+                         showgrid = True,
+                         linecolor = '#33FFFC',
+                         linewidth = 1,
+                         ticks = 'outside',
+                         tickfont = dict(
+                             family = 'Arial',
+                             size = 12,
+                             color = '#33FFFC')
+
+                         ),
+
+            yaxis = dict(range = [min(bitcoin_price) - 3, max(bitcoin_price) + 5],
+                         title = '<b>Valor</b>',
+                         color = '#33FFFC',
+                         #showspikes= False,
+                         showline = True,
+                         showgrid = True,
+                         linecolor = '#33FFFC',
+                         linewidth = 1,
+                         ticks = 'outside',
+                         tickfont = dict(
+                             family = 'Arial',
+                             size = 12,
+                             color = '#33FFFC')
+
+                         ),
+
+            # legend = {
+            #     'orientation': 'h',
+            #     'bgcolor': '#F2F2F2',
+            #     'x': 0.5,
+            #     'y': 1.25,
+            #     'xanchor': 'center',
+            #     'yanchor': 'top'},
+            font = dict(
+                family = "sans-serif",
+                size = 12,
+                color = 'green')
+
+        )
+
+            }
+
+
+@app.callback(Output('chart2', 'figure'),
+              [Input('update_value', 'n_intervals')])
+def update_graph(n_intervals):
+    if n_intervals == 0:
+        raise PreventUpdate
+    else:
+        header_list = ['Time', 'Estado de Carga', 'Velocidade', 'Temperatura1', 'Temperatura2', 'Temperatura3', 'Temperatura4', 'RPM1', 'RPM2', 'RPM3', 'RPM4', 'TEMPERATURA MOTOR']
+        bitcoin_df = pd.read_csv('data.csv', names = header_list)
+        bitcoin_price = bitcoin_df['Temperatura1'].tail(10)
+        time_interval = bitcoin_df['Time'].tail(10)
+
+
+    return {
+        'data': [go.Scatter(
+            x = time_interval,
+            y = bitcoin_price,
+            #fill = 'tonexty',
+            #fillcolor = 'rgba(255, 0, 255, 0.1)',
+            mode = 'markers+lines',
+            line = dict(width = 2, color = '#ff00ff'),
+            # marker = dict(size = 7, symbol = 'circle', color = '#D35400',
+            #               line = dict(color = '#D35400', width = 2)
+            #               ),
+
+            hoverinfo = 'text',
+            hovertext =
+            '<b>Time</b>: ' + time_interval.astype(str) + '<br>' +
+            '<b>Bitcoin Price</b>: ' + [f'${x:,.2f}' for x in bitcoin_price] + '<br>'
+
+
+        )],
+
+        'layout': go.Layout(
+            # paper_bgcolor = 'rgba(0,0,0,0)',
+            # plot_bgcolor = 'rgba(0,0,0,0)',
+            plot_bgcolor = 'rgba(50, 53, 70, 0)',
+            paper_bgcolor = 'rgba(50, 53, 70, 0)',
+            title = {
+                'text': 'Título',
+
+                'y': 0.97,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+            titlefont = {
+                'color': 'white',
+                'size': 17},
+
+            hovermode = 'x unified',
+            margin = dict(t = 25, r = 10, l = 70),
+
+            xaxis = dict(range = [min(time_interval), max(time_interval)],
+                         title = '<b>Time</b>',
+                         color = 'white',
+                         #showspikes=True,
+                         showline = True,
+                         showgrid = True,
+                         linecolor = 'white',
+                         linewidth = 1,
+                         ticks = 'outside',
+                         tickfont = dict(
+                             family = 'Arial',
+                             size = 12,
+                             color = 'white')
+
+                         ),
+
+            yaxis = dict(range = [min(bitcoin_price) - 3, max(bitcoin_price) + 5],
+                         title = '<b>Valor</b>',
+                         color = 'white',
+                         #showspikes= False,
+                         showline = True,
+                         showgrid = True,
+                         linecolor = 'white',
+                         linewidth = 1,
+                         ticks = 'outside',
+                         tickfont = dict(
+                             family = 'Arial',
+                             size = 12,
+                             color = 'white')
+
+                         ),
+
+            # legend = {
+            #     'orientation': 'h',
+            #     'bgcolor': '#F2F2F2',
+            #     'x': 0.5,
+            #     'y': 1.25,
+            #     'xanchor': 'center',
+            #     'yanchor': 'top'},
+            font = dict(
+                family = "sans-serif",
+                size = 12,
+                color = 'white')
+
+        )
+
+            }
+
+
+@app.callback(Output('chart3', 'figure'),
+              [Input('update_value', 'n_intervals')])
+def update_graph(n_intervals):
+    if n_intervals == 0:
+        raise PreventUpdate
+    else:
+        header_list = ['Time', 'Estado de Carga', 'Velocidade', 'Temperatura1', 'Temperatura2', 'Temperatura3',
+                       'Temperatura4', 'RPM1', 'RPM2', 'RPM3', 'RPM4', 'TEMPERATURA MOTOR']
+        bitcoin_df = pd.read_csv('data.csv', names = header_list)
+        bitcoin_price = bitcoin_df['Temperatura1'].tail(10)
+        time_interval = bitcoin_df['Time'].tail(10)
+
+
+    return {
+        'data': [go.Scatter(
+            x = time_interval,
+            y = bitcoin_price,
+            #fill = 'tonexty',
+            #fillcolor = 'rgba(255, 0, 255, 0.1)',
+            mode = 'markers+lines',
+            line = dict(width = 2, color = '#ff00ff'),
+            # marker = dict(size = 7, symbol = 'circle', color = '#D35400',
+            #               line = dict(color = '#D35400', width = 2)
+            #               ),
+
+            hoverinfo = 'text',
+            hovertext =
+            '<b>Time</b>: ' + time_interval.astype(str) + '<br>' +
+            '<b>Bitcoin Price</b>: ' + [f'${x:,.2f}' for x in bitcoin_price] + '<br>'
+
+
+        )],
+
+        'layout': go.Layout(
+            # paper_bgcolor = 'rgba(0,0,0,0)',
+            # plot_bgcolor = 'rgba(0,0,0,0)',
+            plot_bgcolor = 'rgba(50, 53, 70, 0)',
+            paper_bgcolor = 'rgba(50, 53, 70, 0)',
+            title = {
+                'text': '',
+
+                'y': 0.97,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+            titlefont = {
+                'color': 'white',
+                'size': 17},
+
+            hovermode = 'x unified',
+            margin = dict(t = 25, r = 10, l = 70),
+
+            xaxis = dict(range = [min(time_interval), max(time_interval)],
+                         title = '<b>Time</b>',
+                         color = 'white',
+                         #showspikes=True,
+                         showline = True,
+                         showgrid = True,
+                         linecolor = 'white',
+                         linewidth = 1,
+                         ticks = 'outside',
+                         tickfont = dict(
+                             family = 'Arial',
+                             size = 12,
+                             color = 'white')
+
+                         ),
+
+            yaxis = dict(range = [min(bitcoin_price) - 3, max(bitcoin_price) + 5],
+                         title = '<b>Valor</b>',
+                         color = 'white',
+                         #showspikes= False,
+                         showline = True,
+                         showgrid = True,
+                         linecolor = 'white',
+                         linewidth = 1,
+                         ticks = 'outside',
+                         tickfont = dict(
+                             family = 'Arial',
+                             size = 12,
+                             color = 'white')
+
+                         ),
+
+            # legend = {
+            #     'orientation': 'h',
+            #     'bgcolor': '#F2F2F2',
+            #     'x': 0.5,
+            #     'y': 1.25,
+            #     'xanchor': 'center',
+            #     'yanchor': 'top'},
+            font = dict(
+                family = "sans-serif",
+                size = 12,
+                color = 'white')
+
+        )
+
+            }
+
 
 @app.callback(Output('card_1','children'),
                 [Input('update_value','n_intervals')])
@@ -108,23 +393,38 @@ def update_card(n_intervals):
             html.Div([
                 dbc.Row([
                     dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
-                                value=t1_r1,
-                                color='white',
-                                backgroundColor="red"
-                                    ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm1,
-                                color='white',
-                                backgroundColor="#112c38"
-                                    )
-                                ])
-                            ]),
+                        daq.LEDDisplay(
+                            label='TEMPERATURA ºc', style = {'color':'white'},
+                            value=t1_r1,
+                            color='white',
+                            backgroundColor="red",
+                            size = 20
+                            ),
+                        daq.LEDDisplay(
+                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            value=t1_r1,
+                            color='white',
+                            backgroundColor="red",
+                            size=20
+                            ),
+                        ]),
+                    dbc.Col([
+                        daq.LEDDisplay(
+                            label='RPM', style={'color': 'white'},
+                            value=rpm1,
+                            color='white',
+                            backgroundColor="#112c38",
+                            size = 20
+                        ),
+                        daq.LEDDisplay(
+                            label='RPM', style={'color': 'white'},
+                            value=rpm1,
+                            color='white',
+                            backgroundColor="#112c38",
+                            size=20
+                        )
                     ])
+                ])
             ]),
         ]
 
@@ -138,14 +438,118 @@ def update_card(n_intervals):
                                 label='TEMPERATURA ºc', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
-                                backgroundColor="gray"
+                                backgroundColor="gray",
+                                size = 30
                                     ),
                             html.Br(),
                             daq.LEDDisplay(
                                 label='RPM', style={'color': 'white'},
                                 value=rpm1,
                                 color='white',
-                                backgroundColor="#112c38"
+                                backgroundColor="#112c38",
+                                size = 30
+                                    )
+                                ])
+                            ]),
+                    ])
+            ]),
+        ]
+
+    if t1_r1 < 30:
+        return [
+            html.Div([
+                dbc.Row([
+                    dbc.Col([
+                            daq.LEDDisplay(
+                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                value=t1_r1,
+                                color='white',
+                                backgroundColor="green",
+                                size = 30
+                                    ),
+                            ], width=6),
+                    dbc.Col([
+                        daq.LEDDisplay(
+                            label='RPM', style={'color': 'white'},
+                            value=rpm1,
+                            color='white',
+                            backgroundColor="#112c38",
+                            size=30
+                            )
+                        ], width=6)
+                    ])
+            ]),
+        ]
+
+@app.callback(Output('card_2','children'),
+                [Input('update_value','n_intervals')])
+def update_card(n_intervals):
+    if n_intervals == 0:
+        raise PreventUpdate
+    else:
+        arq2 = pd.read_csv('data.csv', names=header_list)
+        t1_r1 = arq2['Temperatura1'].tail(1).iloc[0]
+        rpm1 = arq2['Temperatura1'].tail(1).iloc[0]
+    if t1_r1 > 80:
+        return [
+            html.Div([
+                dbc.Row([
+                    dbc.Col([
+                        daq.LEDDisplay(
+                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            value=t1_r1,
+                            color='white',
+                            backgroundColor="red",
+                            size=20
+                        ),
+                        daq.LEDDisplay(
+                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            value=t1_r1,
+                            color='white',
+                            backgroundColor="red",
+                            size=20
+                        ),
+                    ]),
+                    dbc.Col([
+                        daq.LEDDisplay(
+                            label='RPM', style={'color': 'white'},
+                            value=rpm1,
+                            color='white',
+                            backgroundColor="#112c38",
+                            size=20
+                        ),
+                        daq.LEDDisplay(
+                            label='RPM', style={'color': 'white'},
+                            value=rpm1,
+                            color='white',
+                            backgroundColor="#112c38",
+                            size=20
+                        )
+                    ])
+                ])
+            ]),
+        ]
+
+    if 30 <= t1_r1 <= 80:
+        return [
+            html.Div([
+                dbc.Row([
+                    dbc.Col([
+                        html.Div([
+                            daq.LEDDisplay(
+                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                value=t1_r1,
+                                color='white',
+                                backgroundColor="gray",
+                                size = 30
+                                    ),
+                            html.Br(),
+                            daq.LEDDisplay(
+                                label='RPM', style={'color': 'white'},
+                                value=rpm1,
+                                color='white',
+                                backgroundColor="#112c38",
+                                size = 30
                                     )
                                 ])
                             ]),
@@ -163,14 +567,16 @@ def update_card(n_intervals):
                                 label='TEMPERATURA ºc', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
-                                backgroundColor="green"
+                                backgroundColor="green",
+                                size = 30
                                     ),
                             html.Br(),
                             daq.LEDDisplay(
                                 label='RPM', style={'color': 'white'},
                                 value=rpm1,
                                 color='white',
-                                backgroundColor="#112c38"
+                                backgroundColor="#112c38",
+                                size = 30
                                     )
                                 ])
                             ]),
@@ -178,362 +584,109 @@ def update_card(n_intervals):
             ]),
         ]
 
-@app.callback(Output('card_2', 'children'),
-              [Input('update_value', 'n_intervals')])
+@app.callback(Output('card_3','children'),
+                [Input('update_value','n_intervals')])
 def update_card(n_intervals):
     if n_intervals == 0:
         raise PreventUpdate
     else:
         arq2 = pd.read_csv('data.csv', names=header_list)
-        velo = arq2['Velocidade'].tail(1).iloc[0]
-    if velo > 0:
+        t1_r1 = arq2['Temperatura1'].tail(1).iloc[0]
+        rpm1 = arq2['RPM1'].tail(1).iloc[0]
+    if t1_r1 > 80:
         return [
             html.Div([
                 dbc.Row([
                     dbc.Col([
-                        html.Div([
-                            daq.Gauge(
-                                color={"gradient": True, "ranges": {"purple": [0, 20], "green": [20, 60], "yellow": [60, 80], "red": [80, 140], "#800903":[140, 150]}},
-                                showCurrentValue=True,
-                                units="KMH",
-                                value=velo,
-                                #label='VELOCIMETRO',
-                                style={'color': 'white', 'textAlign':'center'},
-                                max=150,
-                                min=0
-                            ),
-                            #daq.LEDDisplay(
-                            #    value=velo,
-                            #    color='white',
-                            #    backgroundColor="#112c38",
-                            #    style = {'textAlign':'center'}
-                            #)
-                        ])
+                        daq.LEDDisplay(
+                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            value=t1_r1,
+                            color='white',
+                            backgroundColor="red",
+                            size=20
+                        ),
+                        daq.LEDDisplay(
+                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            value=t1_r1,
+                            color='white',
+                            backgroundColor="red",
+                            size=20
+                        ),
                     ]),
-                ])
-            ]),
-        ]
-    if velo <= 0:
-        return [
-            html.Div([
-                dbc.Row([
                     dbc.Col([
-                        html.Div([
-                            daq.Gauge(
-                                color={"gradient": True, "ranges": {"purple": [0, 20], "green": [20, 60], "yellow": [60, 80], "red": [80, 140], "#800903":[140, 150]}},
-                                showCurrentValue=True,
-                                units="KMH",
-                                value=velo,
-                                #label='VELOCIMETRO',
-                                style={'color': 'white', 'textAlign':'center'},
-                                max=150,
-                                min=0
-                            ),
-                            #daq.LEDDisplay(
-                            #    value=velo,
-                            #    color='white',
-                            #    backgroundColor="#112c38",
-                            #    style = {'textAlign':'center'}
-                            #)
-                        ])
-                    ]),
+                        daq.LEDDisplay(
+                            label='RPM', style={'color': 'white'},
+                            value=rpm1,
+                            color='white',
+                            backgroundColor="#112c38",
+                            size=20
+                        ),
+                        daq.LEDDisplay(
+                            label='RPM', style={'color': 'white'},
+                            value=rpm1,
+                            color='white',
+                            backgroundColor="#112c38",
+                            size=20
+                        )
+                    ])
                 ])
             ]),
         ]
 
-
-@app.callback(Output('card_3', 'children'),
-              [Input('update_value', 'n_intervals')])
-def update_card(n_intervals):
-    if n_intervals == 0:
-        raise PreventUpdate
-    else:
-        arq2 = pd.read_csv('data.csv', names=header_list)
-        t2_r2 = arq2['Temperatura2'].tail(1).iloc[0]
-        rpm2 = arq2['RPM2'].tail(1).iloc[0]
-    if t2_r2 > 80:
+    if 30 <= t1_r1 <= 80:
         return [
             html.Div([
                 dbc.Row([
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t2_r2,
+                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                value=t1_r1,
                                 color='white',
-                                backgroundColor="red"
-                            ),
+                                backgroundColor="gray",
+                                size = 30
+                                    ),
                             html.Br(),
                             daq.LEDDisplay(
                                 label='RPM', style={'color': 'white'},
-                                value=rpm2,
+                                value=rpm1,
                                 color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
+                                backgroundColor="#112c38",
+                                size = 30
+                                    )
+                                ])
+                            ]),
+                    ])
             ]),
         ]
 
-    if 30 <= t2_r2 <= 80:
+    if t1_r1 < 30:
         return [
             html.Div([
                 dbc.Row([
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t2_r2,
+                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                value=t1_r1,
                                 color='white',
-                                backgroundColor="gray"
-                            ),
+                                backgroundColor="green",
+                                size = 30
+                                    ),
                             html.Br(),
                             daq.LEDDisplay(
                                 label='RPM', style={'color': 'white'},
-                                value=rpm2,
+                                value=rpm1,
                                 color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
-
-    if t2_r2 < 30:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t2_r2,
-                                color='white',
-                                backgroundColor="green"
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm2,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
+                                backgroundColor="#112c38",
+                                size = 30
+                                    )
+                                ])
+                            ]),
+                    ])
             ]),
         ]
 
 
-@app.callback(Output('card_4', 'children'),
-              [Input('update_value', 'n_intervals')])
-def update_card(n_intervals):
-    if n_intervals == 0:
-        raise PreventUpdate
-    else:
-        arq2 = pd.read_csv('data.csv', names=header_list)
-        t3_r3 = arq2['Temperatura3'].tail(1).iloc[0]
-        rpm3 = arq2['RPM3'].tail(1).iloc[0]
-    if t3_r3 > 80:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t3_r3,
-                                color='white',
-                                backgroundColor="red"
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm3,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
-
-    if 30 <= t3_r3 <= 80:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t3_r3,
-                                color='white',
-                                backgroundColor="gray"
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm3,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
-
-    if t3_r3 < 30:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t3_r3,
-                                color='white',
-                                backgroundColor="green"
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm3,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
-
-
-@app.callback(Output('card_5', 'children'),
-              [Input('update_value', 'n_intervals')])
-def update_card(n_intervals):
-    if n_intervals == 0:
-        raise PreventUpdate
-    else:
-        arq2 = pd.read_csv('data.csv', names=header_list)
-        ec_b = arq2['Estado de Carga'].tail(1).iloc[0]
-        tm = arq2['TEMPERATURA MOTOR'].tail(1).iloc[0]
-    if ec_b >= 0:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.GraduatedBar(
-                                label = 'carga', style = {'color':'black', 'textAlign':'center'},
-                                showCurrentValue=True,
-                                color={"gradient": True, "ranges": {"red": [0, 10], "yellow": [10, 70], "purple": [70, 100]}},
-                                min=0,
-                                max=100,
-                                step=5,
-                                value=ec_b
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='TEMPERATURA MOTOR ºc',style={'color': 'white'},
-                                value=tm,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
-
-
-@app.callback(Output('card_6', 'children'),
-              [Input('update_value', 'n_intervals')])
-def update_card(n_intervals):
-    if n_intervals == 0:
-        raise PreventUpdate
-    else:
-        arq2 = pd.read_csv('data.csv', names=header_list)
-        t4_r4 = arq2['Temperatura4'].tail(1).iloc[0]
-        rpm4 = arq2['RPM4'].tail(1).iloc[0]
-    if t4_r4 > 80:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t4_r4,
-                                color='white',
-                                backgroundColor="red"
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm4,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
-
-    if 30 <= t4_r4 <= 80:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t4_r4,
-                                color='white',
-                                backgroundColor="gray"
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm4,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
-
-    if t4_r4 < 30:
-        return [
-            html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.Div([
-                            daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style={'color': 'white'},
-                                value=t4_r4,
-                                color='white',
-                                backgroundColor="green"
-                            ),
-                            html.Br(),
-                            daq.LEDDisplay(
-                                label='RPM', style={'color': 'white'},
-                                value=rpm4,
-                                color='white',
-                                backgroundColor="#112c38"
-                            )
-                        ])
-                    ]),
-                ])
-            ]),
-        ]
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8888)
-    #app.run_server(host='0.0.0.0', debug=True)
-
+    app.run_server(debug=True, port=1010)
