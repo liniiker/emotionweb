@@ -197,6 +197,7 @@ def update_graph(n_intervals):
             #fill = 'tonexty',
             #fillcolor = 'rgba(255, 0, 255, 0.1)',
             mode = 'markers+lines',
+            #k
             line = dict(width = 2, color = '#ff00ff'),
             # marker = dict(size = 7, symbol = 'circle', color = '#D35400',
             #               line = dict(color = '#D35400', width = 2)
