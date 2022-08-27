@@ -20,61 +20,95 @@ arq = pd.read_csv('data.csv', names=header_list)
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+##################################################
+
+tabs_styles = {
+    'height': '44px'
+}
+tab_style = {
+    'borderBottom': '1px solid #d6d6d6',
+    'padding': '6px',
+    'fontWeight': 'bold'
+}
+
+tab_selected_style = {
+
+    'backgroundColor': '#000138',
+    'color': 'white',
+    'padding': '6px'
+}
+
+##################################################
+
 app.layout = html.Div([
     html.Div([
-        dcc.Interval(id = 'update_value',
-        interval = 900,
-        n_intervals= 0),
+        dcc.Interval(id='update_value',
+                     interval=900,
+                     n_intervals=0),
     ]),
 
-    dbc.Row([
-        dbc.Col([
-            html.Div([
-                dcc.Graph(id = 'chart',
-                          animate = True,
-                          style = {'height':'30vh'}
-                )
-            ])
-        ],width=8,),
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody(html.Div(id='card_1'))
-            ], color='#112c38', style = {'height':'30vh'})
-        ],width=4),
-    ], style={'height':'30vh','width':'100vw'}),
-    html.Br(),
-    dbc.Row([
-        dbc.Col([
-            html.Div([
-                dcc.Graph(id = 'chart2',
-                          animate = True,
-                          style = {'height':'30vh'}
-                )
-            ])
-        ],width=8),
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody(html.Div(id='card_2'))
-            ], color='#112c38', style = {'height':'30vh'})
-        ],width=4),
-    ], style={'height':'30vh','width':'100vw'}),
-    html.Br(),
-    dbc.Row([
-        dbc.Col([
-            html.Div([
-                dcc.Graph(id = 'chart3',
-                          animate = True,
-                          style = {'height':'30vh'}
-                )
-            ])
-        ],width=8),
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody(html.Div(id='card_3'))
-            ], color='#112c38', style = {'height':'30vh'})
-        ],width=4),
-    ], style={'height':'30vh','width':'100vw'}),
-], style={'height':'100vh','width':'100vw','background-color':'#000138'})
+    dcc.Tabs([
+        dcc.Tab(label='Página 1', children=[
+
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        dcc.Graph(id='chart',
+                                  animate=True,
+                                  style={'height': '30vh'}
+                                  )
+                    ])
+                ], width=8, ),
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody(html.Div(id='card_1'))
+                    ], color='#112c38', style={'height': '30vh'})
+                ], width=4),
+            ], style={'height': '30vh', 'width': '100vw'}),
+
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        dcc.Graph(id='chart2',
+                                  animate=True,
+                                  style={'height': '30vh'}
+                                  )
+                    ])
+                ], width=8),
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody(html.Div(id='card_2'))
+                    ], color='#112c38', style={'height': '30vh'})
+                ], width=4),
+            ], style={'height': '30vh', 'width': '100vw'}),
+
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        dcc.Graph(id='chart3',
+                                  animate=True,
+                                  style={'height': '30vh'}
+                                  )
+                    ])
+                ], width=8),
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody(html.Div(id='card_3'))
+                    ], color='#112c38', style={'height': '30vh'})
+                ], width=4),
+            ], style={'height': '30vh', 'width': '100vw'}),
+        ], style=tab_style, selected_style=tab_selected_style),
+
+        dcc.Tab(label='Página 2', children=[
+
+        ], style=tab_style, selected_style=tab_selected_style),
+        dcc.Tab(label='Página 3', children=[
+
+        ], style=tab_style, selected_style=tab_selected_style),
+
+
+    ], style=tabs_styles)
+], style={'height': '100vh', 'width': '100vw', 'background-color': '#000138'})
 
 @app.callback(Output('chart', 'figure'),
               [Input('update_value', 'n_intervals')])
@@ -690,4 +724,4 @@ def update_card(n_intervals):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=1010)
+    app.run_server(debug=True, port=9090)
