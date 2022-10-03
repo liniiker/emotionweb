@@ -771,3 +771,35 @@ app.layout = html.Div([
 app.run_server(debug=True, use_reloader=False)  # Turn off reloader if inside Jupyter
 
 ###############################################################################################################
+
+dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        dcc.Graph(id='chart2',
+                                  animate=True,
+                                  style={'height': '30vh'}
+                                  )
+                    ])
+                ], width=8),
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody(html.Div(id='card_2'))
+                    ], color='#112c38', style={'height': '30vh'})
+                ], width=4),
+            ], style={'height': '30vh', 'width': '100vw'}),
+
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        dcc.Graph(id='chart3',
+                                  animate=True,
+                                  style={'height': '30vh'}
+                                  )
+                    ])
+                ], width=8),
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody(html.Div(id='card_3'))
+                    ], color='#112c38', style={'height': '30vh'})
+                ], width=4),
+            ], style={'height': '30vh', 'width': '100vw'}),
