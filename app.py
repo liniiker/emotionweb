@@ -85,25 +85,25 @@ app.layout = html.Div([
             dbc.Row([
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardHeader("Roda dianteira esquerda", style={'color': 'white'}),
+                        dbc.CardHeader("Disco de freio dianteiro esquerdo", style={'color': 'white'}),
                         dbc.CardBody(html.Div(id='card_3'))
                     ], color='#112c38', style={'height': '25vh'})
                 ], width=3),
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardHeader("Roda traseira esquerda", style={'color': 'white'}),
+                        dbc.CardHeader("Disco de freio traseiro esquerdo", style={'color': 'white'}),
                         dbc.CardBody(html.Div(id='card_4'))
                     ], color='#112c38', style={'height': '25vh'})
                 ], width=3),
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardHeader("Roda traseira direita", style={'color': 'white'}),
+                        dbc.CardHeader("Disco de freio traseiro direito", style={'color': 'white'}),
                         dbc.CardBody(html.Div(id='card_5'))
                     ], color='#112c38', style={'height': '25vh'})
                 ], width=3),
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardHeader("Roda dianteira direita", style={'color': 'white'}),
+                        dbc.CardHeader("Disco de freio dianteiro direito", style={'color': 'white'}),
                         dbc.CardBody(html.Div(id='card_6'))
                     ], color='#112c38', style={'height': '25vh'})
                 ], width=3),
@@ -150,7 +150,7 @@ def update_graph(n_intervals):
             hoverinfo = 'text',
             hovertext =
             '<b>Time</b>: ' + time_interval.astype(str) + '<br>' +
-            '<b>Bitcoin Price</b>: ' + [f'${x:,.2f}' for x in bitcoin_price] + '<br>'
+            '<b>Speed</b>: ' + [f'{x:,.2f}' for x in bitcoin_price] + '<br>'
 
 
         )],
@@ -191,7 +191,7 @@ def update_graph(n_intervals):
                          ),
 
             yaxis = dict(range = [min(bitcoin_price) - 3, max(bitcoin_price) + 5],
-                         title = '<b>Valor</b>',
+                         title = '<b>Km/h</b>',
                          color = '#33FFFC',
                          #showspikes= False,
                          showline = True,
@@ -376,43 +376,49 @@ def update_card(n_intervals):
                 dbc.Row([
                     dbc.Col([
 
-                        html.P('Container esquerdo - Temperatura',
+                        html.P('Container esquerdo',
                                style={'textAlign': 'center',
                                       'color': 'white',
                                       'fontSize': 15,
                                       'margin-top': '-3px'
                                       }
                                ),
-                        html.P('M1:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('Temperatura - Umidade',
+                               style = {'textAlign':'center',
+                                        'fontSize':15,
+                                        'color':'white',
+                                        'margin-top':'-15px'
+                                        }),
+                        html.P('M1:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
                                       'line-height': '1',
                                       }
                                ),
-                        html.P('M2:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('M2:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
                                       'line-height': '1',
                                       }
                                ),
-                        html.P('M3:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('M3:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
                                       'line-height': '1',
                                       }
                                ),
-                        html.P('M4:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('M4:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
@@ -420,63 +426,53 @@ def update_card(n_intervals):
                                       }
                                ),
 
-                        html.P('Umidade',
-                               style={'textAlign': 'center',
-                                      'color': 'white',
-                                      'fontSize': 15,
-                                      'margin-top': '-3px'
-                                      }
-                               ),
-                        html.P('{0:,.1f} %'.format(t1_r1),
-                               style={'textAlign': 'center',
-                                      'color': 'red',
-                                      'fontSize': 15,
-                                      'font-weight': 'bold',
-                                      'margin-top': '-3px',
-                                      'line-height': '1',
-                                      }
-                               ),
                     ]),
 
                     dbc.Col([
 
-                        html.P('Container direito - Temperatura',
+                        html.P('Container direito',
                                style={'textAlign': 'center',
                                       'color': 'white',
                                       'fontSize': 15,
                                       'margin-top': '-3px'
                                       }
                                ),
-                        html.P('M1:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('Temperatura - Umidade',
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'fontSize': 15,
+                                      'color': 'white',
+                                      'margin-top': '-15px'
+                                      }),
+                        html.P('M1:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
+                               style={'textAlign': 'center',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
                                       'line-height': '1',
                                       }
                                ),
-                        html.P('M2:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('M2:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
                                       'line-height': '1',
                                       }
                                ),
-                        html.P('M3:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('M3:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
                                       'line-height': '1',
                                       }
                                ),
-                        html.P('M4:   {0:,.1f} ºC'.format(t1_r1),
+                        html.P('M4:   {0:,.1f} ºC - {0:,.1f}%'.format(t1_r1,t1_r1),
                                style={'textAlign': 'center',
-                                      'color': 'red',
+                                      'color': 'white',
                                       'fontSize': 15,
                                       'font-weight': 'bold',
                                       'margin-top': '-3px',
@@ -484,22 +480,6 @@ def update_card(n_intervals):
                                       }
                                ),
 
-                        html.P('Umidade',
-                               style={'textAlign': 'center',
-                                      'color': 'white',
-                                      'fontSize': 15,
-                                      'margin-top': '-3px'
-                                      }
-                               ),
-                        html.P('{0:,.1f} %'.format(t1_r1),
-                               style={'textAlign': 'center',
-                                      'color': 'red',
-                                      'fontSize': 15,
-                                      'font-weight': 'bold',
-                                      'margin-top': '-3px',
-                                      'line-height': '1',
-                                      }
-                               ),
                     ]),
                 ])
             ])
@@ -520,7 +500,7 @@ def update_card(n_intervals):
                 dbc.Row([
                     dbc.Col([
                         daq.LEDDisplay(
-                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            label='TEMPERATURA ºC', style={'color': 'white'},
                             value=t1_r1,
                             color='white',
                             backgroundColor="red",
@@ -549,7 +529,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="gray",
@@ -576,7 +556,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="green",
@@ -611,7 +591,7 @@ def update_card(n_intervals):
                 dbc.Row([
                     dbc.Col([
                         daq.LEDDisplay(
-                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            label='TEMPERATURA ºC', style={'color': 'white'},
                             value=t1_r1,
                             color='white',
                             backgroundColor="red",
@@ -640,7 +620,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="gray",
@@ -667,7 +647,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="green",
@@ -702,7 +682,7 @@ def update_card(n_intervals):
                 dbc.Row([
                     dbc.Col([
                         daq.LEDDisplay(
-                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            label='TEMPERATURA ºC', style={'color': 'white'},
                             value=t1_r1,
                             color='white',
                             backgroundColor="red",
@@ -731,7 +711,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="gray",
@@ -758,7 +738,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="green",
@@ -793,7 +773,7 @@ def update_card(n_intervals):
                 dbc.Row([
                     dbc.Col([
                         daq.LEDDisplay(
-                            label='TEMPERATURA ºc', style={'color': 'white'},
+                            label='TEMPERATURA ºC', style={'color': 'white'},
                             value=t1_r1,
                             color='white',
                             backgroundColor="red",
@@ -822,7 +802,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="gray",
@@ -849,7 +829,7 @@ def update_card(n_intervals):
                     dbc.Col([
                         html.Div([
                             daq.LEDDisplay(
-                                label='TEMPERATURA ºc', style = {'color':'white'},
+                                label='TEMPERATURA ºC', style = {'color':'white'},
                                 value=t1_r1,
                                 color='white',
                                 backgroundColor="green",
@@ -870,4 +850,4 @@ def update_card(n_intervals):
         ]
 
 if __name__ == '__main__':
-    app.run_server(debug=False, port=9060)
+    app.run_server(debug=True, port=1010)
