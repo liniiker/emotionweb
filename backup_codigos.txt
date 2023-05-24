@@ -1,3 +1,5 @@
+your code.
+
 https://stackoverflow.com/questions/72496810/live-update-multiple-y-axis-in-plotly-dash
 
 27/08
