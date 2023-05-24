@@ -1,5 +1,5 @@
 your code.
-24/05 02
+24/05 03
 https://stackoverflow.com/questions/72496810/live-update-multiple-y-axis-in-plotly-dash
 
 27/08
