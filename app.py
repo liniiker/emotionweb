@@ -9,6 +9,31 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
 
+import time
+import cachetools
+
+def load_data():
+  start_time = time.time()
+  data = []
+  for i in range(100000):
+    data.append(i)
+  end_time = time.time()
+  print("Tempo de carregamento:", end_time - start_time)
+
+@cachetools.cached({})
+def load_cached_data():
+  start_time = time.time()
+  data = []
+  for i in range(100000):
+    data.append(i)
+  end_time = time.time()
+  print("Tempo de carregamento:", end_time - start_time)
+
+def main():
+  load_cached_data()
+
+
+
 
 #pip freeze > requirements.txt
 
@@ -1006,4 +1031,5 @@ def update_card(n_intervals):
         ]
 
 if __name__ == '__main__':
+    main()
     app.run_server(debug=True, port=2020)
